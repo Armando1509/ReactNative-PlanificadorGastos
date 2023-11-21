@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -11,25 +11,47 @@ import {
 import {Picker} from '@react-native-picker/picker'
 import globalStyles from '../styles';
 
-const FormularioGasto = ({setModal, handleGasto}) => {
+const FormularioGasto = ({setModal, handleGasto, setGasto, gasto}) => {
     const [nombre, setNombre] = useState('')
     const [cantidad, setCantidad] = useState('')
     const [categoria, setCategoria] = useState('')
+    const [id, setId] = useState('')
+    const [fecha, setFecha] = useState('')
 
+    useEffect(()=>{
+        if(gasto?.nombre){
+            setNombre(gasto.nombre)
+            setCantidad(gasto.cantidad)
+            setCategoria(gasto.categoria)
+            setId(gasto.id)
+            setFecha(gasto.fecha)
+        }
+    },[gasto])
 
   return (
     <SafeAreaView style={styles.contenedor} >
       <View>
         <Pressable 
-            style={styles.btnCancelar} 
-            onPress={() => setModal(false)}
+            style={[ styles.btn, styles.btnCancelar]} 
+            onPress={() => {
+                setModal(false)
+                setGasto({})
+            }}
         >
-          <Text style={styles.btnCancelarText}>Cancelar</Text>
+          <Text style={styles.btnTexto}>Cancelar</Text>
+        </Pressable>
+
+        <Pressable 
+            style={[ styles.btn, styles.btnEliminar]} 
+        >
+          <Text style={styles.btnTexto}>Eliminar</Text>
         </Pressable>
       </View>
 
       <View style={styles.formulario} >
-        <Text style={styles.titulo} >Nuevo Gasto</Text>
+        <Text style={styles.titulo} >
+            {gasto?.nombre ? 'Editar gasto': 'Nuevo Gasto' }
+        </Text>
 
         <View style={styles.campo} >
             <Text style={styles.label} >Nombre Gasto</Text>
@@ -74,9 +96,9 @@ const FormularioGasto = ({setModal, handleGasto}) => {
 
         <Pressable 
             style={styles.submitBtn} 
-            onPress={() => handleGasto({nombre, cantidad, categoria})}
+            onPress={() => handleGasto({nombre, cantidad, categoria, id, fecha})}
         >
-            <Text style={styles.submitBtnText} >Agregar Gasto</Text>
+            <Text style={styles.submitBtnText} >{gasto?.nombre ? 'Guardar cambios':'Agregar Gasto' }</Text>
         </Pressable>
 
       </View>
@@ -89,6 +111,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1e40af',
         flex: 1,
     },
+    btn:{
+        padding: 10,
+        marginTop: 30,
+        marginHorizontal: 10,
+        borderRadius: 10,
+    },
+    btnEliminar:{
+        backgroundColor: 'red'
+    },
+
     formulario:{
         ...globalStyles.contenedor
     },
@@ -127,12 +159,9 @@ const styles = StyleSheet.create({
     },
     btnCancelar:{
         backgroundColor: '#db2777',
-        padding: 10,
-        marginTop: 30,
-        marginHorizontal: 10,
-        borderRadius: 10,
+        
     },
-    btnCancelarText:{
+    btnTexto:{
         textAlign: 'center',
         textTransform: 'uppercase',
         fontWeight: 'bold',

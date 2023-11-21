@@ -24,10 +24,9 @@ import ListadoGastos from './src/components/ListadoGastos';
 function App() {
   const [isValidPresupuesto, setIsValidPresupuesto] = useState(false);
   const [presupuesto, setPresupuesto] = useState(0);
-  const [gastos, setGastos] = useState([
-    {id:1, cantidad: 500}
-  ]);
+  const [gastos, setGastos] = useState([]);
   const [modal, setModal] = useState(false)
+  const [gasto, setGasto] = useState({})
 
   const handleNuevoPresupuesto = presupuesto => {
     if (Number(presupuesto) > 0) {
@@ -38,18 +37,27 @@ function App() {
   };
 
   const handleGasto = gasto =>{
-    if(Object.values(gasto).includes('')){
+    if([gasto.nombre, gasto.categoria, gasto.cantidad].includes('')){
       Alert.alert('Error', 'Todos los campos son obligatorios')
       return
     } 
-    gasto.id = generarId()
-    setGastos([...gastos, gasto])
+    if(gasto.id){
+      const gastosActualizados = gastos.map(gastosState => gastosState.id === gasto.id ? gasto: gastosState)
+      setGastos(gastosActualizados)
+    }else{
+
+      gasto.id = generarId()
+      gasto.fecha = Date.now()
+  
+      setGastos([...gastos, gasto])
+    }
     setModal(!modal)
-    console.log(gasto);
+    
   }
 
   return (
     <View style={styles.contenedor}>
+      <ScrollView>
       <View style={styles.header}>
         <Header />
         {isValidPresupuesto ? (
@@ -67,8 +75,14 @@ function App() {
       </View>
 
         {isValidPresupuesto && (
-          <ListadoGastos/>
+          <ListadoGastos
+          gastos={gastos}
+          setModal={setModal}
+          setGasto={setGasto}
+          />
         )}
+
+</ScrollView>
 
       {modal&&(
         <Modal  
@@ -78,6 +92,8 @@ function App() {
           <FormularioGasto
             setModal={setModal}
             handleGasto={handleGasto}
+            gasto={gasto}
+            setGasto={setGasto}
           />
         </Modal>
       )}
@@ -102,12 +118,13 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#3b82f6',
+    minHeight: 400,
   },
   imagen:{
     width: 60,
     height: 60,
     position: 'absolute',
-    top: 30,
+    bottom: 10,
     right:30,
   }
 });
