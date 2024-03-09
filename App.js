@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   SafeAreaView,
@@ -14,6 +14,7 @@ import {
   Modal,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from './src/components/Header';
 import NuevoPresupuesto from './src/components/NuevoPresupuesto';
 import ControlPresupuesto from './src/components/ControlPresupuesto';
@@ -28,6 +29,18 @@ function App() {
   const [gastos, setGastos] = useState([]);
   const [modal, setModal] = useState(false);
   const [gasto, setGasto] = useState({});
+  const [filtro, setFiltro] = useState('');
+  const [gastosFiltrados, setGastosFiltrados] = useState([]);
+
+  useEffect(() => {
+    const nombre ='Armando'
+    const almacenarAs = async ()=>{
+      await AsyncStorage.setItem('prueba_as', nombre)
+      console.log('almacenado');
+    }
+    almacenarAs()
+  }, [])
+  
 
   const handleNuevoPresupuesto = presupuesto => {
     if (Number(presupuesto) > 0) {
@@ -99,13 +112,18 @@ function App() {
         {isValidPresupuesto && (
           <>
             <Filtro
-              
+              filtro={filtro}
+              setFiltro={setFiltro}
+              gastos={gastos}
+              setGastosFiltrados={setGastosFiltrados}
             />
             
             <ListadoGastos
               gastos={gastos}
               setModal={setModal}
               setGasto={setGasto}
+              filtro={filtro}
+              gastosFiltrados={gastosFiltrados}
             />
           </>
         )}
