@@ -1,12 +1,8 @@
 import React, {useState, useEffect} from 'react';
 
 import {
-  SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
   View,
   Alert,
   Pressable,
@@ -32,20 +28,61 @@ function App() {
   const [filtro, setFiltro] = useState('');
   const [gastosFiltrados, setGastosFiltrados] = useState([]);
 
+  useEffect(() => {
+    const obtenerPresupuestoStorage = async () => {
+      try {
+        const presupuestoStorage =
+          (await AsyncStorage.getItem('planificador_presupuesto')) ?? 0;
+        if (presupuestoStorage > 0) {
+          setPresupuesto(presupuestoStorage);
+          setIsValidPresupuesto(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerPresupuestoStorage();
+  }, []);
 
-  useEffect(()=>{
-    if(isValidPresupuesto){
-      const guardarPresupuestoStorage = async () =>{
+  useEffect(() => {
+    if (isValidPresupuesto) {
+      const guardarPresupuestoStorage = async () => {
         try {
-          await AsyncStorage.setItem('planificador_presupuesto', presupuesto)
+          await AsyncStorage.setItem('planificador_presupuesto', presupuesto);
         } catch (error) {
           console.log(error);
         }
-      }
-      guardarPresupuestoStorage()
+      };
+      guardarPresupuestoStorage();
     }
+  }, [isValidPresupuesto]);
 
-  },[isValidPresupuesto])
+  useEffect(() => {
+    const obtenerGastosStorage = async () => {
+      try {
+        const gastosStorage = await AsyncStorage.getItem('planificador_gastos');
+        console.log(gastosStorage);
+        setGastos(gastosStorage ? JSON.parse(gastosStorage) : []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerGastosStorage();
+  }, []);
+
+  useEffect(() => {
+    const guardarGastosStorage = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'planificador_gastos',
+          JSON.stringify(gastos),
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    guardarGastosStorage();
+  }, [gastos]);
 
   const handleNuevoPresupuesto = presupuesto => {
     if (Number(presupuesto) > 0) {
@@ -96,6 +133,29 @@ function App() {
     );
   };
 
+  const resetearApp = () => {
+    Alert.alert(
+      '¿Deseas resetear la app?',
+      'Esto eliminara presupuesto y gastos',
+      [
+        {text: 'NO', style: 'cancel'},
+        {
+          text: 'Si, Eliminar',
+          onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+              setIsValidPresupuesto(false)
+              setPresupuesto(0)
+              setGastos([])
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <View style={styles.contenedor}>
       <ScrollView>
@@ -103,7 +163,11 @@ function App() {
           <Header />
           {isValidPresupuesto ? (
             <>
-              <ControlPresupuesto presupuesto={presupuesto} gastos={gastos} />
+              <ControlPresupuesto
+                presupuesto={presupuesto}
+                gastos={gastos}
+                resetearApp={resetearApp}
+              />
             </>
           ) : (
             <NuevoPresupuesto
@@ -122,7 +186,7 @@ function App() {
               gastos={gastos}
               setGastosFiltrados={setGastosFiltrados}
             />
-            
+
             <ListadoGastos
               gastos={gastos}
               setModal={setModal}
