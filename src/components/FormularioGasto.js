@@ -62,7 +62,7 @@ const FormularioGasto = ({setModal, handleGasto, setGasto, gasto, eliminarGasto}
             <Text style={styles.label} >Nombre Gasto</Text>
             <TextInput
                 style={styles.input}
-                placeholder='Nombre comida'
+                
                 value={nombre}
                 onChangeText={setNombre}
             />
@@ -72,7 +72,7 @@ const FormularioGasto = ({setModal, handleGasto, setGasto, gasto, eliminarGasto}
             <Text style={styles.label}>Cantidad Gasto</Text>
             <TextInput
                 style={styles.input}
-                placeholder='Cantidad Gasto'
+                
                 keyboardType='numeric'
                 value={cantidad}
                 onChangeText={setCantidad}
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         marginTop: 10,
+        color: "#000000"
     },
     submitBtn: {
         backgroundColor: '#3b82f6',

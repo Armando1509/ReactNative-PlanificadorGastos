@@ -23,6 +23,7 @@ const Filtro = ({setFiltro, filtro, gastos, setGastosFiltrados}) => {
     <View style={styles.contenedor}>
       <Text style={styles.label}>Filtrar Gastos</Text>
       <Picker
+        style={styles.menu}
         selectedValue={filtro}
         onValueChange={valor => {
           setFiltro(valor);
@@ -51,6 +52,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#64748b',
   },
+  menu:{
+    color: "#000000"
+  }
 });
 
 export default Filtro;

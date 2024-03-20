@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
   cantidad: {
     fontSize: 20,
     fontWeight: '700',
+    color: "#000000"
   },
   fecha: {
     fontWeight: '700',

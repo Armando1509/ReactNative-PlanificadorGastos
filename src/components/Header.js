@@ -5,7 +5,8 @@ const Header = () => {
   return (
     <SafeAreaView>
       
-        <Text style={styles.texto}>Planificador de Gastos</Text>
+        <Text style={styles.texto}>Planificador de Gastos By Conde</Text>
+        {/* <Text style={styles.texto}>By Conde</Text> */}
       
     </SafeAreaView>
   );
